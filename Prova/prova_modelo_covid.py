@@ -37,10 +37,10 @@
 # - nome_arq_covid_completo: (String) Nome do arquivo da covid a salvar. Ex: './owid-covid-data.csv'
 #
 # Saídas
+#
 # - Uma figura contendo o fator de supressão e o fator g, dos espectros definidos
 # - Uma figura para cada espectro de probabilidades, contendo as previsões, os dados observados e as médias
 #
-
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -99,10 +99,10 @@ def calcula_g_estrategia(n_nb7, n_k, t, estrategia_g='Media', g_fixo=None, prob_
     return g
 
 
-def calcula_extremos(prob_agent, fator_n_min, n_k_t, g):
+def calcula_extremos(prob_agent, fator_n, n_k_t, g):
     n8 = 0
     for i in range(len(prob_agent)):
-        n8 += prob_agent[i] * fator_n_min[i]
+        n8 += prob_agent[i] * fator_n[i]
     n8 = n8 * g * n_k_t
     n8 = int(n8)
 
@@ -215,6 +215,7 @@ def executa_branch_direita(d):
                                                                       espectro_a_executar, label_estrategia,
                                                                       d.num_dias_para_media, d.data_inicial,
                                                                       d.data_final, d.data_inicial_previsao, d.N)
+        plt.xticks(range(len(n_k_real)))
         plt.title(titulo)
         plt.xlabel('dias')
         plt.ylabel(label_serie)
@@ -237,6 +238,7 @@ def executa_branch_direita(d):
     titulo = '{} {} - Estratégia g: {} - Dias de média: {} \nPeriodo:{}/{} - Inicio Prev: {} ({} dias)'.format(
         d.valor_coluna_agrupador, label_serie,
         label_estrategia, d.num_dias_para_media, d.data_inicial, d.data_final, d.data_inicial_previsao, d.N)
+    plt.xticks(range(len(n_k_real)))
     plt.title(titulo)
     plt.xlabel('dias')
     plt.ylabel('Fator de Supressão e g')

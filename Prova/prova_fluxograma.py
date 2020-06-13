@@ -37,10 +37,39 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 
-from Codigos.specplus import dfa1d
-from Codigos.mfdfa_ss_m2 import getMSSByUpscaling
-from Exercicio4.exercicio4_1 import graph
-from Exercicio4.exercicio4_2_1 import plot_histograma_e_gev
+from tools.specplus import dfa1d
+from tools.mfdfa_ss_m2 import getMSSByUpscaling
+from tools.cullen_frey_andre_from_R import graph
+
+from scipy.stats import genextreme
+
+
+def plot_histograma_e_gev(str_fam_sinal, df_sinais, c, loc, scale, num_inicio, num_final, num_total,
+                          nome_coluna='valor'):
+    arr_valores_atuais = df_sinais[nome_coluna].to_numpy()
+    histogram, bins_edge = np.histogram(arr_valores_atuais, bins=20)
+
+    # plot histograma
+    width = 0.7 * (bins_edge[1] - bins_edge[0])
+    center = (bins_edge[:-1] + bins_edge[1:]) / 2
+    fig, ax1 = plt.subplots()
+    color = 'tab:blue'
+    plt.bar(center, histogram, align='center', width=width)
+    plt.title('Histograma da Série {}'.format(str_fam_sinal))
+    plt.xlabel("bin")
+    plt.ylabel("Quantidade")
+    ax1.tick_params(axis='y', labelcolor=color)
+
+    # plot PDF
+    ax2 = ax1.twinx()
+    np.linspace(genextreme.ppf(0.01, c), genextreme.ppf(0.99, c), 100)
+    x = np.linspace(num_inicio, num_final, num_total)
+    ax2.get_yaxis().set_ticks([])
+    ax2.plot(x, genextreme.pdf(x, c, loc, scale), 'r-', lw=5, alpha=0.6, label='genextreme pdf')
+    fig.tight_layout()
+    plt.savefig("./histograma_familia_{}.png".format(str_fam_sinal))
+    plt.show()
+    plt.close()
 
 
 def executa_branch_esquerda(d):
@@ -112,8 +141,8 @@ def executa_branch_esquerda(d):
     plt.plot(stats['LH'], stats['f'], 'ko-')
     plt.title(
         'Espectro de singularidades.\n$\\alpha$0 = {:.2f} : $\\Delta$$\\alpha$ = {:.2f} : $\\psi$ = {:.2f}'
-        ' : A$\\alpha$ = {:.2f}'.format(stats['alfa_0'], stats['delta_alfa'], stats['a_alfa'],
-                                        stats['psi']))
+        ' : A$\\alpha$ = {:.2f}'.format(stats['alfa_0'], stats['delta_alfa'], stats['psi'],
+                                        stats['a_alfa']))
     plt.xlabel(r'$\alpha$')
     plt.ylabel(r'$f(\alpha)$')
     plt.grid('on', which='major')
