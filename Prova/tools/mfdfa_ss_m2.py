@@ -147,12 +147,10 @@ def getMSSByUpscaling(dx, normType=np.inf, isDFA=1, isNormalised=1):
 
     # Psi calculation for Exercise 7.1
     delta_alfa = LH_max - LH_min
-    alfa_0 = max(f)[0]
-
+    f_alfa_0 = max(f)[0]
+    aux_i = np.where(f == f_alfa_0)
+    alfa_0 = LH[aux_i][0]
     psi = delta_alfa / LH_max
-
-    if psi < 0 or psi > 1:
-        print('psi')
 
     a_alfa = (alfa_0 - LH_min) / (LH_max - alfa_0)
     stats = {'tau': tau, 'LH': LH, 'f': f, 'LH_min': LH_min, 'LH_max': LH_max, 'a_alfa': a_alfa, 'psi': psi,
